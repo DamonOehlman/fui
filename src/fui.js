@@ -3,9 +3,7 @@
     var chains = [],
         eventSources = {};
         
-    //= helpers/core
     //= helpers/bind
-    
     //= types/chain
     
     function fui(opts) {

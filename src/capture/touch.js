@@ -1,3 +1,0 @@
-function captureTouch(target, interactor) {
-    
-}
