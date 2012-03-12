@@ -9,23 +9,34 @@
     <script src="../fui.js"></script>
     <script>
     fui()
+        // only continue if the element matches the selector (uses qwery)
         .filter('canvas')
+        
+        // convert to relative coordinates
         .relative()
+        
+        // for each of the targets matched, push a context onto the argument list
         .each(function(target) {
             this.args.unshift(target.getContext('2d'));
         })
+        
+        // handle pointer down events
         .down(function(context, target, x, y) {
             this.state.down = true;
             
             context.beginPath();
             context.moveTo(x, y);
         })
+        
+        // handle pointer move events
         .move(function(context, target, x, y) {
             if (this.state.down) {
                 context.lineTo(x, y);
                 context.stroke();
             }
         })
+        
+        // handle pointer up events
         .up(function(context, target, x, y) {
             this.state.down = false;
             context.closePath();
