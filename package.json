@@ -1,0 +1,32 @@
+{
+  "name": "fui",
+  "description": "Functional User Interaction",
+  "author": "Damon Oehlman <damon.oehlman@sidelab.com>",
+  "tags": [
+    "ui",
+    "interaction",
+    "touch",
+    "events",
+    "mouse",
+    "pointer"
+  ],
+  "version": "0.0.1",
+  "main": "./fui.js",
+  "engines": {
+    "node": ">= 0.4.x < 0.7.0"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "interleave": "0.2.x",
+    "uglify-js": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DamonOehlman/fui.git"
+  },
+  "bugs": {
+    "url": "http://github.com/DamonOehlman/fui/issues"
+  },
+  "contributors": []
+}
