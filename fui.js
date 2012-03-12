@@ -37,6 +37,7 @@
         
         // initialise the state member
         this.state = {};
+        this.lastTarget;
     }
     
     EventChain.prototype = {
@@ -107,6 +108,9 @@
             do {
                 result = this._next(evt);
             } while (result);
+            
+            // update the last target
+            this.lastTarget = evt.target;
             
             return result;
         }

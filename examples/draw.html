@@ -1,13 +1,25 @@
 <html>
 <body>
+    <h2>Original Canvases</h2>
     <canvas width="200px" height="200px"></canvas>
     <canvas width="200px" height="200px"></canvas>
+    <h2>User Canvases</h2>
+    <p><button onclick="newCanvas();">Create a Canvas</button></p>
+    <div id="usercanvas"></div>
     <style type="text/css">
     canvas { background: #eee; }
     </style>
     <script src="https://raw.github.com/ded/qwery/master/qwery.min.js"></script>
     <script src="../fui.js"></script>
     <script>
+    function newCanvas() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 200;
+        
+        document.getElementById('usercanvas').appendChild(canvas);
+    }
+    
     fui()
         .filter('canvas')
         .relative()
@@ -21,14 +33,16 @@
             context.moveTo(x, y);
         })
         .move(function(context, target, x, y) {
-            if (this.state.down) {
+            if (this.lastTarget && target !== this.lastTarget) {
+                context.moveTo(x, y);
+            }
+            else if (this.state.down) {
                 context.lineTo(x, y);
                 context.stroke();
             }
         })
         .up(function(context, target, x, y) {
             this.state.down = false;
-            context.closePath();
         });
     </script>
 </body>
