@@ -7,33 +7,6 @@
     var chains = [],
         eventSources = {};
         
-    function calcRelative(target, x, y) {
-        if (target.offsetParent) {
-            do {
-                x -= target.offsetLeft;
-                y -= target.offsetTop;
-    
-                target = target.offsetParent;
-            } while (target);
-        } // if
-    
-        return { x: x, y: y };
-    }
-    
-    function matchTarget(evt, targetElement) {
-        var targ = evt.target || evt.srcElement,
-            targClass = targ.className;
-        
-        // while we have a target, and that target is not the target element continue
-        // additionally, if we hit an element that has an interactor bound to it (will have the class interactor)
-        // then also stop
-        while (targ && (targ !== targetElement)) {
-            targ = targ.parentNode;
-        } // while
-        
-        return targ && (targ === targetElement);
-    } // matchTarget
-
     var isIE = typeof window.attachEvent != 'undefined',
     
         // define the bind function
@@ -58,7 +31,6 @@
                 target.removeEventListener(evtName, callback, true);
             };
 
-    
     function EventChain() {
         this._index = 0;
         this._steps = [];
@@ -179,6 +151,23 @@
     }
     
     EventSource.prototype = {
+        _createEvent: function(name, evt) {
+            return {
+                // initialise the name
+                name: name,
+                
+                // initialise the target
+                target: evt.target || evt.sourceElement,
+                
+                // grab the pageX and pageY from the original event
+                pageX: evt.pageX,
+                pageY: evt.pageY,
+                
+                // save a reference to the original event
+                original: evt
+            };
+        },
+        
         add: function(chain) {
             this.chains.push(chain);
         },
@@ -187,15 +176,11 @@
             var source = this;
             
             return function(evt) {
-                // standardize the target
-                evt.target = evt.target || evt.sourceElement;
+                var event = source._createEvent(eventName, evt);
                 
-                // add the event name
-                evt.name = eventName;
-    
                 // iterate through the chains and start the event on each of them
                 for (var ii = source.chains.length; ii--; ) {
-                    source.chains[ii].process(evt);
+                    source.chains[ii].process(event);
                 }
             };
         }

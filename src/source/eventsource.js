@@ -3,6 +3,23 @@ function EventSource() {
 }
 
 EventSource.prototype = {
+    _createEvent: function(name, evt) {
+        return {
+            // initialise the name
+            name: name,
+            
+            // initialise the target
+            target: evt.target || evt.sourceElement,
+            
+            // grab the pageX and pageY from the original event
+            pageX: evt.pageX,
+            pageY: evt.pageY,
+            
+            // save a reference to the original event
+            original: evt
+        };
+    },
+    
     add: function(chain) {
         this.chains.push(chain);
     },
@@ -11,15 +28,11 @@ EventSource.prototype = {
         var source = this;
         
         return function(evt) {
-            // standardize the target
-            evt.target = evt.target || evt.sourceElement;
+            var event = source._createEvent(eventName, evt);
             
-            // add the event name
-            evt.name = eventName;
-
             // iterate through the chains and start the event on each of them
             for (var ii = source.chains.length; ii--; ) {
-                source.chains[ii].process(evt);
+                source.chains[ii].process(event);
             }
         };
     }
