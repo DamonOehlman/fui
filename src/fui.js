@@ -39,12 +39,33 @@
     // initialise the different source handlers
     fui.sources = {};
     
+    // initialise the templates hash
+    fui.templates = {};
+    
     // create a template function, which is useful for creating chains not automatically bound to an event source
-    fui.template = function(opts) {
+    fui.define = function(name, opts) {
+        var chain;
+        
+        // if we don't have a name specified, but have been passed options
+        // then remap arguments
+        if (typeof name == 'object' && (! name instanceof String)) {
+            opts = name;
+            name = '';
+        }
+        
+        // initialise options
         opts = opts || {};
         opts.source = 'none';
         
-        return fui(opts);
+        // create a chain
+        chain = fui(opts);
+        
+        // if we have a name specified, then add to the template
+        if (name) {
+            fui.templates[name] = chain;
+        }
+        
+        return chain;
     };
 
     //= source/eventsource
