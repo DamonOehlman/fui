@@ -13,8 +13,8 @@ MouseSource.prototype._bindEvents = function(target) {
     var source = this;
     
     // bind the mouse down event handler
-    bindEvent(target, 'mousedown', source.pipe('down'));
-    bindEvent(target, 'mousemove', source.pipe('move'));
-    bindEvent(target, 'mouseup', source.pipe('up'));
+    bindEvent(target, 'mousedown', source.handle('down'));
+    bindEvent(target, 'mousemove', source.handle('move'));
+    bindEvent(target, 'mouseup', source.handle('up'));
 };
 

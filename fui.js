@@ -31,8 +31,9 @@
                 target.removeEventListener(evtName, callback, true);
             };
 
-    function EventChain() {
+    function EventChain(opts) {
         this._index = 0;
+        this._relative = false;
         this._steps = [];
         
         // initialise the state member
@@ -78,16 +79,25 @@
         
         relative: function() {
             return this._step(function(target, x, y) {
-                if (target.offsetParent) {
-                    do {
-                        x -= target.offsetLeft;
-                        y -= target.offsetTop;
+                if (! this._relative) {
+                    if (target.offsetParent) {
+                        do {
+                            x -= target.offsetLeft;
+                            y -= target.offsetTop;
     
-                        target = target.offsetParent;
-                    } while (target);
-                } // if
-                
-                this.args = this.args.slice(0, 1).concat([x, y]);
+                            target = target.offsetParent;
+                        } while (target);
+                    } // if
+    
+                    this.args = this.args.slice(0, 1).concat([x, y]);
+                    this._relative = true;
+                }
+            });
+        },
+        
+        pipe: function(target) {
+            return this._step(function() {
+                target.process(this.event);
             });
         },
         
@@ -98,8 +108,9 @@
         process: function(evt) {
             var result;
             
-            // reset the chain index
+            // reset values to default
             this._index = 0;
+            this._relative = false;
             
             // initialise the args to the page x and page y
             this.event = evt;
@@ -125,7 +136,7 @@
 
     
     function fui(opts) {
-        var chain = chains[chains.length] = new EventChain(),
+        var chain = chains[chains.length] = new EventChain(opts),
             eventSource;
         
         // initialise the options
@@ -137,11 +148,18 @@
         // if we don't have an event source for the source type, then create it
         eventSource = eventSources[opts.souce];
         if (! eventSource) {
-            eventSource = eventSources[opts.source] = new fui.sources[opts.source](document);
+            var Source = fui.sources[opts.source];
+            
+            // if we have a Source creator then do that now
+            if (Source) {
+                eventSource = eventSources[opts.source] = new Source(document);
+            }
         }
         
-        // add the chain to the event source
-        eventSource.add(chain);
+        // if we have an event source, then add the chain to the source
+        if (eventSource) {
+            eventSource.add(chain);
+        }
         
         // return the chain
         return chain;
@@ -149,6 +167,14 @@
 
     // initialise the different source handlers
     fui.sources = {};
+    
+    // create a template function, which is useful for creating chains not automatically bound to an event source
+    fui.template = function(opts) {
+        opts = opts || {};
+        opts.source = 'none';
+        
+        return fui(opts);
+    };
 
     function EventSource() {
         this.chains = [];
@@ -176,7 +202,7 @@
             this.chains.push(chain);
         },
         
-        pipe: function(eventName) {
+        handle: function(eventName) {
             var source = this;
             
             return function(evt) {
@@ -205,9 +231,9 @@
         var source = this;
         
         // bind the mouse down event handler
-        bindEvent(target, 'mousedown', source.pipe('down'));
-        bindEvent(target, 'mousemove', source.pipe('move'));
-        bindEvent(target, 'mouseup', source.pipe('up'));
+        bindEvent(target, 'mousedown', source.handle('down'));
+        bindEvent(target, 'mousemove', source.handle('move'));
+        bindEvent(target, 'mouseup', source.handle('up'));
     };
     
     

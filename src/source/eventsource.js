@@ -24,7 +24,7 @@ EventSource.prototype = {
         this.chains.push(chain);
     },
     
-    pipe: function(eventName) {
+    handle: function(eventName) {
         var source = this;
         
         return function(evt) {

@@ -1,5 +1,6 @@
-function EventChain() {
+function EventChain(opts) {
     this._index = 0;
+    this._relative = false;
     this._steps = [];
     
     // initialise the state member
@@ -45,16 +46,25 @@ EventChain.prototype = {
     
     relative: function() {
         return this._step(function(target, x, y) {
-            if (target.offsetParent) {
-                do {
-                    x -= target.offsetLeft;
-                    y -= target.offsetTop;
+            if (! this._relative) {
+                if (target.offsetParent) {
+                    do {
+                        x -= target.offsetLeft;
+                        y -= target.offsetTop;
 
-                    target = target.offsetParent;
-                } while (target);
-            } // if
-            
-            this.args = this.args.slice(0, 1).concat([x, y]);
+                        target = target.offsetParent;
+                    } while (target);
+                } // if
+
+                this.args = this.args.slice(0, 1).concat([x, y]);
+                this._relative = true;
+            }
+        });
+    },
+    
+    pipe: function(target) {
+        return this._step(function() {
+            target.process(this.event);
         });
     },
     
@@ -65,8 +75,9 @@ EventChain.prototype = {
     process: function(evt) {
         var result;
         
-        // reset the chain index
+        // reset values to default
         this._index = 0;
+        this._relative = false;
         
         // initialise the args to the page x and page y
         this.event = evt;
