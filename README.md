@@ -46,6 +46,8 @@ Rather than target specific element, event capture is targeted at the `document`
 
 If the element matches, then remaining steps execute and not if it doesn't.  In this way, the event handling code is not reliant on DOM elements being available when the code is first initialized, but rather is inspected on a case by case basis.
 
+For examples, see the examples folder in the repo.
+
 ## Roadmap
 
 If this works out, then I will implement touch handlers for the same interface (as per Interact).
