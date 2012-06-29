@@ -5,7 +5,7 @@ function EventChain(opts) {
     
     // initialise the state member
     this.state = {};
-    this.lastTarget;
+    this.lastTarget = null;
 }
 
 EventChain.prototype = {
@@ -39,8 +39,25 @@ EventChain.prototype = {
     },
     
     filter: function(selector) {
+        // TODO: memoize this function
         return this._step(function(target) {
-            return qwery.is(target, selector);
+            var isMatch = false;
+            
+            // TODO: check for cached matches
+            if (target._matches) {
+            }
+            
+            if (target && target.parentNode) {
+                // find all the matches in the parent node of this node
+                var matches = document.querySelectorAll(selector, target.parentNode);
+                
+                // if this node is a match, then it should 
+                for (var ii = matches.length; ii--; ) {
+                    isMatch = isMatch || matches[ii] === target;
+                }
+            }
+            
+            return isMatch;
         });
     },
     
@@ -81,6 +98,8 @@ EventChain.prototype = {
         
         // initialise the args to the page x and page y
         this.event = evt;
+        
+        // if we are using a useful browser, then initialise the events in a simple way
         this.args = [evt.target, evt.pageX, evt.pageY];
         
         do {
@@ -94,9 +113,14 @@ EventChain.prototype = {
     }
 };
 
-// autowire the down, move and up handlers
-['down', 'up', 'move'].forEach(function(eventName) {
-    EventChain.prototype[eventName] = function(handler) {
-        return this._on(eventName, handler);
-    };
-});
+EventChain.prototype.down = function(handler) {
+    return this._on('down', handler);
+};
+
+EventChain.prototype.up = function(handler) {
+    return this._on('up', handler);
+};
+
+EventChain.prototype.move = function(handler) {
+    return this._on('move', handler);
+};

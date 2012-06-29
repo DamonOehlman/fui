@@ -1,0 +1,43 @@
+<html>
+<body>
+    <div id="debug"></div>
+    <style type="text/css">
+    body {
+        margin: 0;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+    
+    #debug {
+        font: 0.8em monospace;
+        height: 200px;
+        overflow-y: scroll;
+        padding: 10px;
+    }
+    </style>
+    <script src="https://raw.github.com/ded/qwery/master/qwery.min.js"></script>
+    <script src="../fui.js"></script>
+    <script>
+    var debug = (function() {
+        var container = document.getElementById('debug'),
+            lines = [];
+        
+        return function(message) {
+            lines = [message].concat(lines).slice(0, 50);
+            container.innerText = lines.join('\n');
+        };
+    })();
+    
+    fui()
+        .down(function(target, x, y) {
+            debug('pointer down @ ' + x + ', ' + y);
+        })
+        .move(function(target, x, y) {
+            debug('pointer move @ ' + x + ', ' + y);
+        })
+        .up(function(target, x, y) {
+            debug('pointer up @ ' + x + ', ' + y);
+        });
+    </script>
+</body>

@@ -16,5 +16,8 @@ MouseSource.prototype._bindEvents = function(target) {
     bindEvent(target, 'mousedown', source.handle('down'));
     bindEvent(target, 'mousemove', source.handle('move'));
     bindEvent(target, 'mouseup', source.handle('up'));
+
+    // implement a select start handler to prevent the text selection cursor from being displayed
+    target.onselectstart = function() { return false; };
 };
 

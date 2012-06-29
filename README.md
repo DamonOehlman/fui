@@ -10,7 +10,7 @@ There are examples available both in this repository, and online at jsfiddle:
 
 - [Simple Draw Example - Using Template](http://jsfiddle.net/DamonOehlman/v5ydb/)
 
-## Example Code
+### Example Code
 
 Here is some very early example code (which is actually running):
 

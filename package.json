@@ -13,13 +13,12 @@
   "version": "0.0.1",
   "main": "./fui.js",
   "engines": {
-    "node": ">= 0.4.x < 0.7.0"
+    "node": ">= 0.4.x < 0.9.0"
   },
   "dependencies": {
   },
   "devDependencies": {
-    "interleave": "0.2.x",
-    "uglify-js": "*"
+    "interleave": "0.3.x"
   },
   "repository": {
     "type": "git",

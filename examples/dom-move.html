@@ -1,0 +1,66 @@
+<html>
+<body>
+    <style type="text/css">
+    .box {
+        width: 20px;
+        height: 20px;
+        background: red;
+        float: left;
+    }
+    
+    .box.draggable {
+        background: black;
+    }
+    
+    .box.placeholder {
+        background: none;
+    }
+    </style>
+    <script src="../fui.js"></script>
+    <script>
+    var boxCount = 2000;
+    
+    function moveTarget(target, x, y) {
+        target.style.left = (x - 10) + 'px';
+        target.style.top = (y - 10) + 'px'; 
+    }
+    
+    fui()
+        .up(function(target, x, y) {
+            // reset the targets
+            this.target = null;
+        })
+        .move(function(target, x, y) {
+            if (this.target) {
+                moveTarget(this.target, x, y);
+            }
+        })
+        .filter('.draggable')
+        .down(function(target, x, y) {
+            if (target.style.position !== 'absolute') {
+                var div = document.createElement('div');
+                
+                // initialize the class and insert the replacement box
+                div.className = 'box placeholder';
+                document.body.insertBefore(div, target);
+                
+                // update the style of the target to absolute
+                target.style.position = 'absolute';
+            }
+            
+            // insert a placeholder box element
+            
+            
+            moveTarget(this.target = target, x, y);
+        });
+        
+    // create a 100 boxes
+    for (var ii = 0; ii < boxCount; ii++) {
+        var div = document.createElement('div');
+        
+        div.className = ii % 2 === 0 ? 'box' : 'box draggable';
+
+        document.body.appendChild(div);
+    }
+    </script>
+</body>
