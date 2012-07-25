@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 build:
-	@node_modules/interleave/bin/interleave src/fui.js --wrap oldschool --uglify
+	@interleave build --wrap=amd,glob
 
 test:
 	@mocha --reporter spec

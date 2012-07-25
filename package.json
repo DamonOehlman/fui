@@ -18,7 +18,6 @@
   "dependencies": {
   },
   "devDependencies": {
-    "interleave": "0.3.x"
   },
   "repository": {
     "type": "git",
