@@ -1,5 +1,26 @@
+/* ~fui~
+ * 
+ * Functional User Interaction
+ * 
+ * -meta---
+ * version:    0.0.1
+ * builddate:  2012-10-30T00:07:05.551Z
+ * generator:  interleave@0.5.23
+ * 
+ * 
+ * 
+ */ 
 
-define('fui', [], function() {
+// umdjs returnExports pattern: https://github.com/umdjs/umd/blob/master/returnExports.js
+(function (root, factory) {
+    if (typeof exports === 'object') {
+        module.exports = factory();
+    } else if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else {
+        root['fui'] = factory();
+    }
+}(this, function () {
     var chains = [],
         eventSources = {};
         
@@ -298,4 +319,4 @@ define('fui', [], function() {
     
     
     return typeof fui != 'undefined' ? fui : undefined;
-});
+}));

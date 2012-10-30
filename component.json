@@ -1,0 +1,19 @@
+{
+  "name": "fui",
+  "repo": "DamonOehlman/fui",
+  "description": "Functional User Interaction",
+  "author": "Damon Oehlman <damon.oehlman@sidelab.com>",
+  "tags": [
+    "ui",
+    "interaction",
+    "touch",
+    "events",
+    "mouse",
+    "pointer"
+  ],
+  "version": "0.0.1",
+  "main": "fui",
+  "scripts": [
+    "fui.js"
+  ]
+}
