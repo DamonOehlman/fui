@@ -8,52 +8,38 @@ can neatly be abstracted away from the actual event handling code itself.
 
 [![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
 
-## Examples
-
-There are examples available both in this repository,
-and online at jsfiddle:
-
-- [Simple Draw Example - Manual Event Handling](http://jsfiddle.net/DamonOehlman/QuydV/)
-- [Simple Draw Example - Using Template](http://jsfiddle.net/DamonOehlman/v5ydb/)
-
 ### Example Code
 
-Here is some very early example code (which is actually running):
+Here is some example code (which is actually running):
 
-```js
+```
+var fui = require('fui');
+
 fui()
-  // only continue if the element matches the selector (uses qwery)
-  .filter('canvas')
-  
-  // convert to relative coordinates
-  .relative()
-  
-  // for each of the targets matched, push a context onto the argument list
-  .each(function(target) {
-      this.args.unshift(target.getContext('2d'));
-  })
-  
-  // handle pointer down events
-  .down(function(context, target, x, y) {
-      this.state.down = true;
-      
-      context.beginPath();
-      context.moveTo(x, y);
-  })
-  
-  // handle pointer move events
-  .move(function(context, target, x, y) {
-      if (this.state.down) {
-          context.lineTo(x, y);
-          context.stroke();
-      }
-  })
-  
-  // handle pointer up events
   .up(function(context, target, x, y) {
-      this.state.down = false;
-      context.closePath();
+    this.state.down = false;
+  })
+  .filter('canvas')
+  .relative()
+  .each(function(target) {
+     this.args.unshift(target.getContext('2d'));
+  })
+  .down(function(context, target, x, y) {
+    this.state.down = true;
+    
+    context.beginPath();
+    context.moveTo(x, y);
+  })
+  .move(function(context, target, x, y) {
+    if (this.lastTarget && target !== this.lastTarget) {
+      context.moveTo(x, y);
+    }
+    else if (this.state.down) {
+      context.lineTo(x, y);
+      context.stroke();
+    }
   });
+
 ```
 
 ## Reference
