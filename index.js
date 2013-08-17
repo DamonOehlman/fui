@@ -16,7 +16,7 @@ var EventChain = require('./eventchain');
 
   ### Example Code
 
-  Here is some example code (which is actually running):
+  Here is some example code:
 
   <<< examples/draw.js
 

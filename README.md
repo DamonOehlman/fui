@@ -10,7 +10,7 @@ can neatly be abstracted away from the actual event handling code itself.
 
 ### Example Code
 
-Here is some example code (which is actually running):
+Here is some example code:
 
 ```js
 var fui = require('fui');
