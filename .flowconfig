@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/**/.*
+.*/git/.*
+.*/js/.*
+
+[include]
+demos/*.js
+src/**/*.js
+geojs/src/**/*.js
+
+[libs]
+
+[options]
+module.name_mapper='^geojs\(.*\)' -> 'geojs/src\1'
+module.name_mapper='^/' -> '<PROJECT_ROOT>/src/'

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "node test/all.js",
-    "gendocs": "gendocs > README.md"
+    "gendocs": "gendocs > README.md",
+    "examples": "bde examples/"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,22 @@
     "mouse",
     "pointer"
   ],
+  "browserify": {
+    "transform": [
+      "unflowify"
+    ]
+  },
   "author": "Damon Oehlman <damon.oehlman@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/DamonOehlman/fui/issues"
+  },
+  "devDependencies": {
+    "bde": "^1.1.0",
+    "flow-bin": "^0.53.1"
+  },
+  "dependencies": {
+    "global": "^4.3.2",
+    "unflowify": "^1.0.1"
   }
 }

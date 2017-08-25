@@ -1,85 +1,56 @@
-/* jshint node: true */
-'use strict';
+// @flow
 
-var chains = [];
-var activeSources = {};
-var sourceTypes = {
-  mouse: require('./sources/mouse')
+type SelectorOrElement = string | HTMLElement;
+
+// define the target bundle type
+// this is not a closed object type and thus can have more attributes added
+// to it as part of a <TargetBundleMapFunction> but cannot have less attributes
+// than what is defined below.
+type TargetBundle = {
+  element: HTMLElement
 };
-var EventChain = require('./eventchain');
 
-/**
-  # fui
+type BundleMapFunction = (bundle: TargetBundle) => ?TargetBundle;
 
-  This is an experimental library to experiment whether handling of events
-  can neatly be abstracted away from the actual event handling code itself.
+import type { PointerEventType, PointerEvent } from './lib/pointer.js';
+import type { HandlerFunction } from './lib/handler.js';
 
-  ### Example Code
+class FunctionalUserInterface {
+  bundles: Array<TargetBundle>
 
-  Here is some example code:
+  constructor(bundles: Array<TargetBundle>) {
+    this.bundles = bundles;
+  }
 
-  <<< examples/draw.js
-
-  ## Reference
-**/
-
-var fui = module.exports = function(opts) {
-  var chain = chains[chains.length] = new EventChain(opts);
-  var eventSource;
-  var SourceClass;
-  
-  // initialise the options
-  opts = opts || {};
-  
-  // determine whether we are using a touch interface
-  opts.source = opts.source || ('ontouchstart' in window ? 'touch' : 'mouse');
-  
-  // if we don't have an event source for the source type, then create it
-  eventSource = activeSources[opts.source];
-  if (! eventSource) {
-    SourceClass = sourceTypes[opts.source];
-    
-    // if we have a Source creator then do that now
-    if (SourceClass) {
-      eventSource = activeSources[opts.source] = new SourceClass(document);
+  static of(target: SelectorOrElement) {
+    if (target instanceof HTMLElement) {
+      return new FunctionalUserInterface([{ element: target }]);
     }
-  }
-  
-  // if we have an event source, then add the chain to the source
-  if (eventSource) {
-    eventSource.add(chain);
-  }
-  
-  // return the chain
-  return chain;
-};
 
-// initialise the templates hash
-fui.templates = {};
+    const elements = Array.from(document.querySelectorAll(target));
+    if (elements.length === 0) {
+      throw new Error(`No valid targets found for selector "${target}"`);
+    }
 
-// create a template function, which is useful for creating chains
-// not automatically bound to an event source
-fui.define = function(name, opts) {
-  var chain;
-  
-  // if we don't have a name specified, but have been passed options
-  // then remap arguments
-  if (typeof name == 'object' && (! name instanceof String)) {
-    opts = name;
-    name = '';
+    return new FunctionalUserInterface(elements.map(element => ({ element })));
   }
-  
-  // initialise options
-  opts = opts || {};
-  opts.source = 'none';
-  
-  // create a chain
-  chain = fui(opts);
-  
-  // if we have a name specified, then add to the template
-  if (name) {
-    fui.templates[name] = chain;
+
+  map(mapper: BundleMapFunction): FunctionalUserInterface {
+    const bundles = this.bundles.map(mapper).filter(Boolean);
+
+    return new FunctionalUserInterface(bundles);
   }
-  
-  return chain;
+
+  pointer(event: PointerEventType, handler: HandlerFunction<PointerEvent>): this {
+    return this;
+  }
+}
+
+function fui(target: SelectorOrElement) {
+  return FunctionalUserInterface.of(target);
+}
+
+module.exports = {
+  FunctionalUserInterface,
+  fui
 };

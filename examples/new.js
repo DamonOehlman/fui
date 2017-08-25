@@ -1,16 +1,15 @@
 // @flow
 
-const { fui } = require('fui');
+const { fui } = require('..');
 
 fui('canvas')
-  // NOTE: we should memoize map functions as they probably don't change
-  .map({ canvas } => {
-    return {
-      canvas,
-      context: canvas.getContext('2d')
-    };
+  .map(({ element }) => {
+    if (element instanceof HTMLCanvasElement) {
+      const context = element.getContext('2d');
+      return context ? { element, context } : undefined;
+    }
   })
-  .pointer('down', { context, x, y }) => {
+  .pointer('down', ({ context, x, y }) => {
     context.beginPath();
     context.moveTo(x, y);
   })
