@@ -10,35 +10,34 @@ type TargetBundle = {
   element: HTMLElement
 };
 
-type BundleMapFunction = (bundle: TargetBundle) => ?TargetBundle;
+type BundleMapFunction = (bundle: TargetBundle) => TargetBundle;
+type BundleFilterFunction = (bundle: TargetBundle) => boolean;
 
 import type { PointerEventType, PointerEvent } from './lib/pointer.js';
 import type { HandlerFunction } from './lib/handler.js';
 
 class FunctionalUserInterface {
-  bundles: Array<TargetBundle>
+  bundles: Array<TargetBundle>;
+  elementType: typeof HTMLElement;
 
-  constructor(bundles: Array<TargetBundle>) {
+  constructor(bundles: Array<TargetBundle>, elementType: typeof HTMLElement) {
     this.bundles = bundles;
+    this.elementType = elementType;
   }
 
-  static of(target: SelectorOrElement) {
+  static of(target: SelectorOrElement, elementType: typeof HTMLElement): FunctionalUserInterface {
+    let elements = [];
     if (target instanceof HTMLElement) {
-      return new FunctionalUserInterface([{ element: target }]);
-    }
-
-    const elements = Array.from(document.querySelectorAll(target));
-    if (elements.length === 0) {
-      throw new Error(`No valid targets found for selector "${target}"`);
+      elements = [target];
+    } else {
+      elements = Array.from(document.querySelectorAll(target));
     }
 
     return new FunctionalUserInterface(elements.map(element => ({ element })));
   }
 
-  map(mapper: BundleMapFunction): FunctionalUserInterface {
-    const bundles = this.bundles.map(mapper).filter(Boolean);
-
-    return new FunctionalUserInterface(bundles);
+  map(mapper: BundleMapFunction): FunctionalUserInterface<T> {
+    return new FunctionalUserInterface(this.bundles.map(mapper));
   }
 
   pointer(event: PointerEventType, handler: HandlerFunction<PointerEvent>): this {
@@ -46,8 +45,8 @@ class FunctionalUserInterface {
   }
 }
 
-function fui(target: SelectorOrElement) {
-  return FunctionalUserInterface.of(target);
+function fui(target: SelectorOrElement, elementType: typeof HTMLElement): FunctionalUserInterface {
+  return FunctionalUserInterface.of(target, elementType);
 }
 
 module.exports = {

@@ -1,5 +1,15 @@
 var fui = require('..');
 
+const handlers = Handlers.define([
+  'up', ({ context }) => {
+
+  }
+])
+
+fui([
+  
+])
+
 fui()
   .up(function(context, target, x, y) {
     this.state.down = false;
