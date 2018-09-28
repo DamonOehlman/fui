@@ -1,55 +1,39 @@
 // @flow
 
-type SelectorOrElement = string | HTMLElement;
+type SelectorOrElement<T: HTMLElement> = string | T;
 
-// define the target bundle type
-// this is not a closed object type and thus can have more attributes added
-// to it as part of a <TargetBundleMapFunction> but cannot have less attributes
-// than what is defined below.
-type TargetBundle = {
+type ElementBundle = {
   element: HTMLElement
 };
 
-type BundleMapFunction = (bundle: TargetBundle) => TargetBundle;
-type BundleFilterFunction = (bundle: TargetBundle) => boolean;
+type BundleMapFunction<T: HTMLElement> = (bundle: TargetBundle<T>) => TargetBundle<T>;
+type BundleFilterFunction<T: HTMLElement> = (bundle: TargetBundle<T>) => boolean;
 
 import type { PointerEventType, PointerEvent } from './lib/pointer.js';
 import type { HandlerFunction } from './lib/handler.js';
 
-class FunctionalUserInterface {
-  bundles: Array<TargetBundle>;
-  elementType: typeof HTMLElement;
+class FunctionalUserInterface<T: ElementBundle> {
+  bundles: T[];
 
-  constructor(bundles: Array<TargetBundle>, elementType: typeof HTMLElement) {
+  constructor(bundles: T[]) {
     this.bundles = bundles;
-    this.elementType = elementType;
   }
 
-  static of(target: SelectorOrElement, elementType: typeof HTMLElement): FunctionalUserInterface {
-    let elements = [];
-    if (target instanceof HTMLElement) {
-      elements = [target];
-    } else {
-      elements = Array.from(document.querySelectorAll(target));
-    }
+  // map(mapper: BundleMapFunction<T>): FunctionalUserInterface<T> {
+  //   return new FunctionalUserInterface(this.bundles.map(mapper));
+  // }
 
-    return new FunctionalUserInterface(elements.map(element => ({ element })));
-  }
-
-  map(mapper: BundleMapFunction): FunctionalUserInterface<T> {
-    return new FunctionalUserInterface(this.bundles.map(mapper));
-  }
-
-  pointer(event: PointerEventType, handler: HandlerFunction<PointerEvent>): this {
-    return this;
-  }
+  // pointer(event: PointerEventType, handler: HandlerFunction<PointerEvent>): this {
+  //   return this;
+  // }
 }
 
-function fui(target: SelectorOrElement, elementType: typeof HTMLElement): FunctionalUserInterface {
-  return FunctionalUserInterface.of(target, elementType);
+function fui<T: ElementBundle>(target: string): FunctionalUserInterface<T> {
+  const elements: HTMLElement[] = Array.from(document.querySelectorAll(target));
+  return new FunctionalUserInterface(elements.map(element => ({ element })));
 }
 
 module.exports = {
   FunctionalUserInterface,
-  fui
+  fui,
 };
